@@ -26,3 +26,20 @@ pub fn estimate_tx_compressed_size(input: &[u8]) -> u64 {
         .saturating_sub(L1_COST_INTERCEPT)
         .max(MIN_TX_SIZE_SCALED)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_estimate_tx_compressed_size() {
+        const INPUT_EMPTY: &[u8] = b"";
+        const INPUT_LARGE: &[u8] = &[1; 100_000];
+
+        let compressed_size_empty = estimate_tx_compressed_size(INPUT_EMPTY);
+        assert_eq!(compressed_size_empty, MIN_TX_SIZE_SCALED);
+
+        let compressed_size_large = estimate_tx_compressed_size(&INPUT_LARGE);
+        assert!(compressed_size_large > MIN_TX_SIZE_SCALED);
+    }
+}
